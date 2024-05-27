@@ -15,8 +15,8 @@ st.header('Data Exploration:')
 
 # Load the dataset
 train = pd.read_csv('Titanic_train.csv')
-
-st.write('train.head()')
+st.write('Titanic_train data')
+st.write(train.head())
 
 # Show data statistics
 st.write('Summary')
@@ -37,7 +37,7 @@ train.boxplot(ax=ax)
 st.pyplot(fig)
 
 # Data Preprocessing:
-st.header('2. Data Preprocessing')
+st.header('Data Preprocessing:')
 
 st.write(train.info())
 st.write('Missing values in each column:')
