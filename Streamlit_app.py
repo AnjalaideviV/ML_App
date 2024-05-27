@@ -10,6 +10,14 @@ warnings.filterwarnings('ignore')
 # Title for the Streamlit app
 st.title('Titanic Survival Prediction')
 
+def load_data():
+    train = pd.read_csv('Titanic_train.csv')
+    return train
+
+train = load_data()
+
+
+
 # Data Exploration:
 st.header('Data Exploration:')
 
@@ -38,8 +46,10 @@ st.pyplot(fig)
 
 # Data Preprocessing:
 st.header('Data Preprocessing:')
-
+st.subheader('Dataset Information')
 st.write(train.info())
+
+
 st.write('Missing values in each column:')
 st.write(train.isnull().sum())
 
