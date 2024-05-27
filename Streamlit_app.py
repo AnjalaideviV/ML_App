@@ -11,13 +11,17 @@ warnings.filterwarnings('ignore')
 st.title('Titanic Survival Prediction')
 
 # Data Exploration:
-st.header('1. Data Exploration')
+st.header('Data Exploration:')
 
 # Load the dataset
 train = pd.read_csv('Titanic_train.csv')
-st.write(train.head())
+
+st.write('train.head()')
 
 # Show data statistics
+st.write('Summary')
+
+
 st.write(train.describe().T)
 
 # Histograms
