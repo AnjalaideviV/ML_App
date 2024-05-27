@@ -1,55 +1,56 @@
 
-import matplot.pyplot as plt
 import streamlit as st
-import pandas as pd
+import pandas as pd 
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix, classification_report
+import matplotlib.pyplot as plt
+import seaborn as sb
 import warnings
-
 warnings.filterwarnings('ignore')
 
-# Title
-st.title("Titanic Survival Prediction")
+# Title for the Streamlit app
+st.title('Titanic Survival Prediction')
 
-# Load Data
-@st.cache
-def load_data():
-    return pd.read_csv('Titanic_train.csv')
+# Data Exploration:
+st.header('1. Data Exploration')
 
-train = load_data()
-
-# Data Exploration
-st.header("Data Exploration")
+# Load the dataset
+train = pd.read_csv('Titanic_train.csv')
 st.write(train.head())
-st.write(train.tail())
+
+# Show data statistics
 st.write(train.describe().T)
 
+# Histograms
+st.subheader('Histogram of Features')
 fig, ax = plt.subplots(figsize=(15, 10))
-train.hist(bins=30, edgecolor='black', ax=ax)
+train.hist(ax=ax, bins=30, edgecolor='black')
 st.pyplot(fig)
 
+# Boxplot
+st.subheader('Boxplot')
 fig, ax = plt.subplots()
 train.boxplot(ax=ax)
 st.pyplot(fig)
 
-# Data Preprocessing
-st.header("Data Preprocessing")
-train.info()
+# Data Preprocessing:
+st.header('2. Data Preprocessing')
+
+st.write(train.info())
+st.write('Missing values in each column:')
 st.write(train.isnull().sum())
 
 mean = train['Age'].mean()
 train['Age'] = train['Age'].fillna(mean)
-st.write("Mean Age:", mean)
 
-st.write("Number of Duplicates:", train.duplicated().sum())
+# Model Building:
+st.header('3. Model Building')
 
 df = train[['Survived', 'Pclass', 'Sex', 'Age']]
 df = pd.get_dummies(df, columns=['Pclass', 'Sex']).astype(int)
 
-# Model Building
-st.header("Model Building")
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+
 y = df['Survived']
 x = df.drop('Survived', axis=1)
 
@@ -58,19 +59,20 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_
 model = LogisticRegression()
 model.fit(x_train, y_train)
 
-accuracy = model.score(x_test, y_test)
-st.write(f"Model Accuracy: {accuracy}")
+# Model Evaluation:
+st.header('4. Model Evaluation')
 
-# Model Evaluation
-st.header("Model Evaluation")
+st.write('Model Accuracy:', model.score(x_test, y_test))
+
+from sklearn.metrics import confusion_matrix, classification_report
+
 y_predicted = model.predict(x_test)
 cm = confusion_matrix(y_test, y_predicted)
-st.write("Confusion Matrix:", cm)
+st.write('Confusion Matrix:')
+st.write(cm)
 
-predictions = cross_val_predict(model, x_train, y_train, cv=3)
-cm_train = confusion_matrix(y_train, predictions)
-st.write("Cross-Validation Confusion Matrix:", cm_train)
+cr = classification_report(y_test, y_predicted)
+st.write('Classification Report:')
+st.write(cr)
 
-cl_report = classification_report(y_test, y_predicted)
-st.write("Classification Report:", cl_report)
 
