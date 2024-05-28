@@ -16,7 +16,7 @@ st.title('Titanic Survival Prediction')
 # Load the dataset
 train = pd.read_csv('Titanic_train.csv')
 st.write('Data Info')
-st.dataframe(train)
+
 
 submit= st.checkbox('Click here')
 
