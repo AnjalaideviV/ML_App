@@ -55,7 +55,6 @@ train.boxplot(ax=ax)
 st.pyplot(fig)
 
 
-
 missing_data = {
     'Feature': ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare'],
     'Missing Values': [0, 0, 0, 0, 0, 177, 0, 0, 0, 0]
