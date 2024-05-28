@@ -54,8 +54,7 @@ fig, ax = plt.subplots(figsize=(18,8))
 train.boxplot(ax=ax)
 st.pyplot(fig)
 
-# Data Preprocessing:
-st.header('Data Preprocessing:')
+
 
 missing_data = {
     'Feature': ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare'],
