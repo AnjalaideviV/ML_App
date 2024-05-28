@@ -31,6 +31,8 @@ st.header('Data Exploration:')
 
 # Show data statistics
 st.write('For Summary')
+table=train.describe().T
+
 
 submit= st.checkbox('Click here')
 
@@ -38,7 +40,7 @@ if submit:
      st.dataframe(table)
 
 
-table=train.describe().T
+
 # Histograms
 st.subheader('Histogram of Features')
 fig, ax = plt.subplots(figsize=(15, 10))
