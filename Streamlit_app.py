@@ -28,7 +28,7 @@ st.dataframe(table)
 
 # Histograms
 st.subheader('Histogram of Features')
-fig, ax = plt.subplots(figsize=(15, 10))
+fig, ax = plt.subplots(figsize=(5, 10))
 train.hist(ax=ax, bins=30, edgecolor='black')
 st.pyplot(fig)
 
