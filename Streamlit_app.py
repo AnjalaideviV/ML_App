@@ -7,6 +7,8 @@ import seaborn as sb
 import warnings
 warnings.filterwarnings('ignore')
 
+st.set_page_config(page_title='Streamlit')
+
 # Title for the Streamlit app
 st.title('Titanic Survival Prediction')
 
@@ -21,9 +23,8 @@ st.dataframe(train)
 
 # Show data statistics
 st.write('Summary')
-
-
-st.write(train.describe().T)
+table=train.describe().T
+st.dataframe(table)
 
 # Histograms
 st.subheader('Histogram of Features')
@@ -33,7 +34,7 @@ st.pyplot(fig)
 
 # Boxplot
 st.subheader('Boxplot')
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(10,15))
 train.boxplot(ax=ax)
 st.pyplot(fig)
 
