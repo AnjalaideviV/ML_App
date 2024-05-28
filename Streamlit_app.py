@@ -30,8 +30,9 @@ st.header('Data Exploration:')
 
 
 # Show data statistics
-st.write('For Summary')
 table=train.describe().T
+st.write('For Summary')
+
 
 
 submit= st.checkbox('Click here')
