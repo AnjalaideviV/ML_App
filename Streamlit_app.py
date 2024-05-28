@@ -15,7 +15,7 @@ def load_data():
     return train
 
 train = load_data()
-
+st.dataframe(train)
 
 
 # Data Exploration:
