@@ -35,7 +35,7 @@ st.pyplot(fig)
 
 # Boxplot
 st.subheader('Boxplot')
-fig, ax = plt.subplots(figsize=(20,10))
+fig, ax = plt.subplots(figsize=(18,8))
 train.boxplot(ax=ax)
 st.pyplot(fig)
 
