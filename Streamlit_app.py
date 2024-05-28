@@ -13,6 +13,11 @@ st.set_page_config(page_title='Streamlit')
 # Title for the Streamlit app
 st.title('Titanic Survival Prediction')
 
+# Load the dataset
+train = pd.read_csv('Titanic_train.csv')
+st.write('Data Info')
+st.dataframe(train)
+
 submit= st.checkbox('Click here')
 
 if submit:
@@ -23,10 +28,6 @@ if submit:
 # Data Exploration:
 st.header('Data Exploration:')
 
-# Load the dataset
-train = pd.read_csv('Titanic_train.csv')
-st.write('Data Info')
-st.dataframe(train)
 
 # Show data statistics
 st.write('Summary')
