@@ -15,7 +15,10 @@ st.title('Titanic Survival Prediction')
 
 submit=st.button('Click here')
 if submit:
-   st.dataframe(train)
+     st.dataframe(train)
+
+
+
 # Data Exploration:
 st.header('Data Exploration:')
 
