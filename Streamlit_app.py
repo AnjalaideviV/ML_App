@@ -15,7 +15,7 @@ st.title('Titanic Survival Prediction')
 
 # Load the dataset
 train = pd.read_csv('Titanic_train.csv')
-st.write('Data Info')
+st.write('For Data Information')
 
 
 submit= st.checkbox('Click here')
@@ -30,9 +30,15 @@ st.header('Data Exploration:')
 
 
 # Show data statistics
-st.write('Summary')
-table=train.describe().T
-st.dataframe(table)
+st.write('For Summary')
+
+submit= st.checkbox('Click here')
+
+if submit:
+    table=train.describe().T
+     st.dataframe(table)
+
+
 
 # Histograms
 st.subheader('Histogram of Features')
