@@ -35,7 +35,7 @@ st.write('For Summary')
 
 
 
-submit= st.checkbox('Click here')
+submit= st.button('Click here')
 
 if submit:
      st.dataframe(table)
