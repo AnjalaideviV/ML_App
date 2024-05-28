@@ -100,6 +100,6 @@ st.write(cm)
 
 cr = classification_report(y_test, y_predicted)
 st.write('Classification Report:')
-st.table(cr)
+st.dataframe(cr)
 
 
