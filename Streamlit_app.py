@@ -35,11 +35,10 @@ st.write('For Summary')
 submit= st.checkbox('Click here')
 
 if submit:
-    table=train.describe().T
      st.dataframe(table)
 
 
-
+table=train.describe().T
 # Histograms
 st.subheader('Histogram of Features')
 fig, ax = plt.subplots(figsize=(15, 10))
