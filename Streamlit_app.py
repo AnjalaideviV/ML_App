@@ -13,7 +13,8 @@ st.set_page_config(page_title='Streamlit')
 # Title for the Streamlit app
 st.title('Titanic Survival Prediction')
 
-submit=st.button('Click here')
+submit= st.button('Click here')
+
 if submit:
      st.dataframe(train)
 
