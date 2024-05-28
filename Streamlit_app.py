@@ -57,7 +57,7 @@ st.pyplot(fig)
 # Data Preprocessing:
 st.header('Data Preprocessing:')
 info=train.info();
-st.table(info)
+st.dataframe(info)
 
 st.write('Missing values in each column:')
 st.write(train.isnull().sum())
