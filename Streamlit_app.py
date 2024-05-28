@@ -10,17 +10,14 @@ warnings.filterwarnings('ignore')
 # Title for the Streamlit app
 st.title('Titanic Survival Prediction')
 
-    train = pd.read_csv('Titanic_train.csv')
-st.dataframe(train)
-
-
+  
 # Data Exploration:
 st.header('Data Exploration:')
 
 # Load the dataset
 train = pd.read_csv('Titanic_train.csv')
-st.write('Titanic_train data')
-st.write(train.head())
+st.write('Data Info')
+st.dataframe(train)
 
 # Show data statistics
 st.write('Summary')
