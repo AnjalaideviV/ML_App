@@ -9,6 +9,7 @@ warnings.filterwarnings('ignore')
 
 st.set_page_config(page_title='Streamlit')
 
+
 # Title for the Streamlit app
 st.title('Titanic Survival Prediction')
 
@@ -28,13 +29,13 @@ st.dataframe(table)
 
 # Histograms
 st.subheader('Histogram of Features')
-fig, ax = plt.subplots(figsize=(5, 10))
+fig, ax = plt.subplots(figsize=(15, 10))
 train.hist(ax=ax, bins=30, edgecolor='black')
 st.pyplot(fig)
 
 # Boxplot
 st.subheader('Boxplot')
-fig, ax = plt.subplots(figsize=(10,15))
+fig, ax = plt.subplots(figsize=(5,8))
 train.boxplot(ax=ax)
 st.pyplot(fig)
 
