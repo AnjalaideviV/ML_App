@@ -58,12 +58,6 @@ st.pyplot(fig)
 st.header('Data Preprocessing:')
 columns=list(train.columns)
 
-col1,col2=st.columns(2)
-with col1:
-     a=st.ratio('Select Categorical column:',['Passengerid','Survived','Pclass','Name','Sex','Age','SibSp','Parch','Ticket','Fare'])
-with col2:
-     b=st.write('Missing count:',[0,0,0,0,0,177,0,0,0,0])
-st.write('Missing values in each column:')
 st.write(train.isnull().sum())
 
 mean = train['Age'].mean()
