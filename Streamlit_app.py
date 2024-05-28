@@ -61,17 +61,10 @@ missing_data = {
     'Feature': ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare'],
     'Missing Values': [0, 0, 0, 0, 0, 177, 0, 0, 0, 0]
 }
-
-
 missing_df = pd.DataFrame(missing_data)
-
-
 st.write("Missing Values in Each Feature")
 st.table(missing_df)
-
 selected_feature = st.selectbox('Select a feature to view missing values', missing_df['Feature'])
-
-
 missing_count = missing_df[missing_df['Feature'] == selected_feature]['Missing Values'].values[0]
 st.write(f"Missing values in {selected_feature}: {missing_count}")
 
