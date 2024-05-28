@@ -10,11 +10,7 @@ warnings.filterwarnings('ignore')
 # Title for the Streamlit app
 st.title('Titanic Survival Prediction')
 
-def load_data():
     train = pd.read_csv('Titanic_train.csv')
-    return train
-
-train = load_data()
 st.dataframe(train)
 
 
