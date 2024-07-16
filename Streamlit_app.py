@@ -44,7 +44,7 @@ if st.button('Visualizations'):
 
  st.subheader("Correlation Heatmap")
  fig, ax = plt.subplots()
- sns.heatmap(data.corr(), annot=True, ax=ax)
+ sb.heatmap(data.corr(), annot=True, ax=ax)
  st.pyplot(fig)
 
 
@@ -85,13 +85,15 @@ except FileNotFoundError as e:
 st.title("Reliance Industries Stock Data Prediction")
 
 # Date input
-prediction_date = st.date_input("Enter a date for prediction (2024-2029):", value=pd.to_datetime('2024-01-01'))
+st.title("Reliance Industries Stock Data Prediction")
 
-# Ensure date is within the specified range
-if prediction_date < pd.to_datetime('2024-01-01') or prediction_date > pd.to_datetime('2029-12-31'):
-    st.error("Please select a date between 2024 and 2029.")
-else:
-    prediction_date_ordinal = np.array([[prediction_date.toordinal()]])
+# Date input
+your_date = datetime.now().date()  # or any datetime.date object
+prediction_date = st.date_input("Enter a date for prediction (2024-2024):")
+your_timestamp = pd.Timestamp('2024-07-16')  # or any pd.Timestamp object
+
+if your_timestamp.date() == your_date:
+    st.write("Dates match!")
 
     # Button to predict closing price
     if st.button('Predict Close Price'):
