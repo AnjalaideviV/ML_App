@@ -85,9 +85,6 @@ except FileNotFoundError as e:
 st.title("Reliance Industries Stock Data Prediction")
 
 # Date input
-st.title("Reliance Industries Stock Data Prediction")
-
-# Date input
 your_date = datetime.now().date()  # or any datetime.date object
 prediction_date = st.date_input("Enter a date for prediction (2024-2024):")
 your_timestamp = pd.Timestamp('2024-07-16')  # or any pd.Timestamp object
