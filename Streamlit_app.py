@@ -7,112 +7,92 @@ from sklearn.metrics import roc_curve,auc
 import warnings
 warnings.filterwarnings('ignore')
 
-st.set_page_config(page_title='Streamlit')
+st.title("Reliance Industries Stock Data Application")
 
-# Title for the Streamlit app
-st.title('Titanic Survival Prediction')
+data = pd.read_csv('C:\\Users\\Lenovo-PC\\Downloads\\Reliance data (1).csv')
+data['Date'] = pd.to_datetime(data['Date'])  
+data.set_index('Date', inplace=True) 
+st.subheader('Raw Data')   
+st.dataframe(data)
 
-# Load the dataset
-train = pd.read_csv('Titanic_train.csv')
-st.write('For Data Information')
+st.header('Data Summary')
+st.write(data.describe())
+ 
+if st.button('Visualizations'):
+ st.subheader("Close Price Over Time")
+ fig, ax = plt.subplots()
+ ax.plot(data.index, data['Close '])
+ ax.set_xlabel('Date')
+ ax.set_ylabel('Close Price')
+ st.pyplot(fig)
 
+ st.subheader("Trading Volume Over Time")
+ fig, ax = plt.subplots()
+ ax.plot(data.index, data['Volume'])
+ ax.set_xlabel('Date')
+ ax.set_ylabel('Volume')
+ st.pyplot(fig)
 
-submit= st.checkbox('Click here')
-if submit:
-     st.dataframe(train)
-
-# Data Exploration:
-st.header('1.Data Exploration:')
-
-
-# Show data statistics
-table=train.describe().T
-st.write('For Summary')
-submit= st.button('Click here')
-if submit:
-     st.dataframe(table)
-
-# Histograms
-st.subheader('Histogram of Features')
-fig, ax = plt.subplots(figsize=(15, 10))
-train.hist(ax=ax, bins=30, edgecolor='black')
-st.pyplot(fig)
-
-# Boxplot
-st.subheader('Boxplot')
-fig, ax = plt.subplots(figsize=(18,8))
-train.boxplot(ax=ax)
-st.pyplot(fig)
+ st.subheader("Correlation Heatmap")
+ fig, ax = plt.subplots()
+ sns.heatmap(data.corr(), annot=True, ax=ax)
+ st.pyplot(fig)
 
 
-st.subheader('Missing Values')
-missing_data = {
-    'Feature': ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare'],
-    'Missing Values': [0, 0, 0, 0, 0, 177, 0, 0, 0, 0]
-}
-missing_df = pd.DataFrame(missing_data)
-selected_feature = st.selectbox('Select a feature to view missing values', missing_df['Feature'])
-missing_count = missing_df[missing_df['Feature'] == selected_feature]['Missing Values'].values[0]
-st.write(f"Missing values in {selected_feature}: {missing_count}")
-mean = train['Age'].mean()
-train['Age'] = train['Age'].fillna(mean)
+# Prepare features and target for close price
+X = data.index.map(pd.Timestamp.toordinal).values.reshape(-1, 1)
+y_close_price = data['Close '].values
 
-# Model Building:
-st.header('2. Model Building')
-df = train[['Survived', 'Pclass', 'Sex', 'Age']]
-df = pd.get_dummies(df, columns=['Pclass', 'Sex']).astype(int)
-st.dataframe(df)
+# Split data for close price
+X_train_close, X_test_close, y_train_close, y_test_close = train_test_split(X, y_close_price, test_size=0.2, shuffle=False)
 
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-y = df['Survived']
-x = df.drop('Survived', axis=1)
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
-model = LogisticRegression()
-st.write('Model:',model.fit(x_train, y_train))
+# Train model for close price
+close_price_model = LinearRegression()
+close_price_model.fit(X_train_close, y_train_close)
 
-# Model Evaluation:
-st.header('4. Model Evaluation')
-st.write('Model Accuracy:', model.score(x_test, y_test))
-from sklearn.metrics import confusion_matrix, classification_report
-y_predicted = model.predict(x_test)
-cm = confusion_matrix(y_test, y_predicted)
-st.write('Confusion Matrix:')
-st.write(cm)
+# Save close price model
+joblib.dump(close_price_model, 'reliance_close_price_model.pkl')
 
+# Prepare features and target for volume
+y_volume = data['Volume'].values
 
+# Split data for volume
+X_train_volume, X_test_volume, y_train_volume, y_test_volume = train_test_split(X, y_volume, test_size=0.2, shuffle=False)
 
-report_dict = classification_report(y_test, y_predicted, output_dict=True)
-report_str = classification_report(y_test, y_predicted)
-report_df = pd.DataFrame(report_dict).transpose()
-option = st.selectbox(
-    'How would you like to view the classification report?',
-    ('Table', 'JSON', 'Plain Text')
-)
-st.write('Classification Report:')
+# Train model for volume
+volume_model = LinearRegression()
+volume_model.fit(X_train_volume, y_train_volume)
 
-if option == 'Table':
-    st.table(report_df)
-elif option == 'JSON':
-    st.json(report_dict)
+# Save volume model
+joblib.dump(volume_model, 'reliance_volume_model.pkl')
+
+try:
+    close_price_model = joblib.load('reliance_close_price_model.pkl')
+    volume_model = joblib.load('reliance_volume_model.pkl')
+except FileNotFoundError as e:
+    st.error(f"Model file not found: {e}")
+    st.stop()
+
+st.title("Reliance Industries Stock Data Prediction")
+
+# Date input
+prediction_date = st.date_input("Enter a date for prediction (2024-2029):", value=pd.to_datetime('2024-01-01'))
+
+# Ensure date is within the specified range
+if prediction_date < pd.to_datetime('2024-01-01') or prediction_date > pd.to_datetime('2029-12-31'):
+    st.error("Please select a date between 2024 and 2029.")
 else:
-    st.text(report_str)
+    prediction_date_ordinal = np.array([[prediction_date.toordinal()]])
 
-y_score=model.predict_proba(x_test)[:,1]
-
-fpr, tpr, thresholds = roc_curve(y_test, y_score)
-roc_auc = auc(fpr, tpr)
-
-st.subheader('ROC Curve')
-fig, ax = plt.subplots(figsize=(18, 8))
-ax.plot(fpr, tpr, color='blue', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
-ax.plot([0, 1], [0, 1], color='gray', lw=2, linestyle='--')
-ax.set_xlim([0.0, 1.0])
-ax.set_ylim([0.0, 1.05])
-ax.set_xlabel('False Positive Rate')
-ax.set_ylabel('True Positive Rate')
-ax.set_title('Receiver Operating Characteristic (ROC)')
-ax.legend(loc="lower right")
-
-# Display the plot in Streamlit
-st.pyplot(fig)
+    # Button to predict closing price
+    if st.button('Predict Close Price'):
+        predicted_close_price = close_price_model.predict(prediction_date_ordinal)
+        st.subheader(f"Predicted Close Price for {prediction_date}:")
+        st.write(f"{predicted_close_price[0]:.2f}")
+        st.balloons() 
+    # Button to predict volume
+    if st.button('Predict Volume'):
+        predicted_volume = volume_model.predict(prediction_date_ordinal)
+        st.subheader(f"Predicted Volume for {prediction_date}:")
+        st.write(f"{predicted_volume[0]:.2f}")
+        st.balloons() 
