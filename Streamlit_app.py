@@ -1,5 +1,5 @@
 
-@st.cache_data and @st.cache_resource.
+
 
 import streamlit as st
 import pandas as pd 
