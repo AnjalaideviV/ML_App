@@ -13,73 +13,84 @@ warnings.filterwarnings('ignore')
 
 st.title("Reliance Industries Stock Data Application")
 
+# Load data
 data = pd.read_csv('Reliance data.csv')
-data['Date'] = pd.to_datetime(data['Date'])  
-data.set_index('Date', inplace=True) 
-st.subheader('Raw Data')   
+data['Date'] = pd.to_datetime(data['Date'])
+data.set_index('Date', inplace=True)
+
+# Display raw data
+st.subheader('Raw Data')
 st.dataframe(data)
 
+# Display data summary
 st.header('Data Summary')
 st.write(data.describe())
- 
+
+# Display visualizations when button is clicked
 if st.button('Visualizations'):
- st.subheader("Close Price Over Time")
- fig, ax = plt.subplots()
- ax.plot(data.index, data['Close '])
- ax.set_xlabel('Date')
- ax.set_ylabel('Close Price')
- st.pyplot(fig)
+    st.subheader("Close Price Over Time")
+    fig, ax = plt.subplots()
+    ax.plot(data.index, data['Close '])
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Close Price')
+    st.pyplot(fig)
 
- st.subheader("Trading Volume Over Time")
- fig, ax = plt.subplots()
- ax.plot(data.index, data['Volume'])
- ax.set_xlabel('Date')
- ax.set_ylabel('Volume')
- st.pyplot(fig)
+    st.subheader("Trading Volume Over Time")
+    fig, ax = plt.subplots()
+    ax.plot(data.index, data['Volume'])
+    ax.set_xlabel('Date')
+    ax.set_ylabel('Volume')
+    st.pyplot(fig)
 
- st.subheader("Correlation Heatmap")
- fig, ax = plt.subplots()
- sb.heatmap(data.corr(), annot=True, ax=ax)
- st.pyplot(fig)
+    st.subheader("Correlation Heatmap")
+    fig, ax = plt.subplots()
+    sb.heatmap(data.corr(), annot=True, ax=ax)
+    st.pyplot(fig)
 
+# Prepare data for GRU model
+scaler = MinMaxScaler()
+data_scaled = scaler.fit_transform(data[['Close ', 'Volume']])
 
-# Prepare features and target for close price
-X = data.index.map(pd.Timestamp.toordinal).values.reshape(-1, 1)
-y_close_price = data['Close '].values
+# Create sequences for GRU
+def create_sequences(data, seq_length):
+    X, y = [], []
+    for i in range(len(data) - seq_length):
+        X.append(data[i:i + seq_length])
+        y.append(data[i + seq_length, 0])  # Predicting 'Close '
+    return np.array(X), np.array(y)
 
-# Split data for close price
-X_train_close, X_test_close, y_train_close, y_test_close = train_test_split(X, y_close_price, test_size=0.2, shuffle=False)
+seq_length = 10
+X, y = create_sequences(data_scaled, seq_length)
 
-# Train model for close price
-close_price_model = LinearRegression()
-close_price_model.fit(X_train_close, y_train_close)
+# Split data for training and testing
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
-# Save close price model
-joblib.dump(close_price_model, 'reliance_close_price_model.pkl')
+# Build GRU model
+model = tf.keras.Sequential([
+    tf.keras.layers.GRU(50, activation='relu', return_sequences=True, input_shape=(X_train.shape[1], X_train.shape[2])),
+    tf.keras.layers.GRU(50, activation='relu'),
+    tf.keras.layers.Dense(1)
+])
 
-# Prepare features and target for volume
-y_volume = data['Volume'].values
+model.compile(optimizer='adam', loss='mean_squared_error')
 
-# Split data for volume
-X_train_volume, X_test_volume, y_train_volume, y_test_volume = train_test_split(X, y_volume, test_size=0.2, shuffle=False)
+# Train the model
+model.fit(X_train, y_train, epochs=50, batch_size=32)
 
-# Train model for volume
-volume_model = LinearRegression()
-volume_model.fit(X_train_volume, y_train_volume)
+# Save the model
+model.save('reliance_gru_model.h5')
 
-# Save volume model
-joblib.dump(volume_model, 'reliance_volume_model.pkl')
-
+# Load the model
 try:
-    close_price_model = joblib.load('reliance_close_price_model.pkl')
-    volume_model = joblib.load('reliance_volume_model.pkl')
+    model = tf.keras.models.load_model('reliance_gru_model.h5')
 except FileNotFoundError as e:
     st.error(f"Model file not found: {e}")
     st.stop()
 
+# Set title for prediction section
 st.title("Reliance Industries Stock Data Prediction")
 
-# Date input
+# Get date input for prediction
 prediction_date = st.date_input("Enter a date for prediction (2024-2029):")
 
 # Ensure date is within the specified range
@@ -89,17 +100,14 @@ end_date = datetime(2029, 12, 31).date()
 if prediction_date < start_date or prediction_date > end_date:
     st.error("Please select a date between 2024 and 2029.")
 else:
-    prediction_date_ordinal = np.array([[prediction_date.toordinal()]])
+    # Prepare data for prediction
+    last_sequence = data_scaled[-seq_length:]
+    last_sequence = last_sequence.reshape((1, seq_length, 2))  # Reshape for GRU
 
     # Button to predict closing price
     if st.button('Predict Close Price'):
-        predicted_close_price = close_price_model.predict(prediction_date_ordinal)
+        predicted_price = model.predict(last_sequence)
+        predicted_price = scaler.inverse_transform(np.array([[predicted_price[0][0], 0]]))  # Inverse scale
         st.subheader(f"Predicted Close Price for {prediction_date}:")
-        st.write(f"{predicted_close_price[0]:.2f}")
-        st.balloons() 
-    # Button to predict volume
-    if st.button('Predict Volume'):
-        predicted_volume = volume_model.predict(prediction_date_ordinal)
-        st.subheader(f"Predicted Volume for {prediction_date}:")
-        st.write(f"{predicted_volume[0]:.2f}")
-        st.balloons() 
+        st.write(f"{predicted_price[0][0]:.2f}")
+        st.balloons()
