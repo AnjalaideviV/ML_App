@@ -38,7 +38,7 @@ if st.button('Visualizations'):
 
  st.subheader("Correlation Heatmap")
  fig, ax = plt.subplots()
- sns.heatmap(data.corr(), annot=True, ax=ax)
+ sb.heatmap(data.corr(), annot=True, ax=ax)
  st.pyplot(fig)
 
 
