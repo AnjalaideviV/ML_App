@@ -80,15 +80,13 @@ except FileNotFoundError as e:
 st.title("Reliance Industries Stock Data Prediction")
 
 # Date input
-your_date = datetime.now().date()
-prediction_date = st.date_input("Enter a date for prediction (2024-2029):", value=pd.Timestamp('2024-07-16'))
-your_timestamp = pd.Timestamp('2024-07-16')  # or any pd.Timestamp object
-
-if your_timestamp.date() == your_date:
-    st.write("Dates match!")
+prediction_date = st.date_input("Enter a date for prediction (2024-2029):")
 
 # Ensure date is within the specified range
-if prediction_date < pd.to_datetime('2024-01-01') or prediction_date > pd.to_datetime('2029-12-31'):
+start_date = datetime(2024, 1, 1).date()
+end_date = datetime(2029, 12, 31).date()
+
+if prediction_date < start_date or prediction_date > end_date:
     st.error("Please select a date between 2024 and 2029.")
 else:
     prediction_date_ordinal = np.array([[prediction_date.toordinal()]])
