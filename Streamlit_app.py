@@ -90,7 +90,7 @@ prediction_date = st.date_input("Enter a date for prediction (2024-2024):")
 your_timestamp = pd.Timestamp('2024-07-16')  # or any pd.Timestamp object
 
 if your_timestamp.date() == your_date:
-    st.write("Dates match!")
+  
 
     # Button to predict closing price
     if st.button('Predict Close Price'):
