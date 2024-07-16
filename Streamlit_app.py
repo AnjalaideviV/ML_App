@@ -85,13 +85,16 @@ except FileNotFoundError as e:
 st.title("Reliance Industries Stock Data Prediction")
 
 # Date input
-your_date = datetime.now().date()  # or any datetime.date object
-prediction_date = st.date_input("Enter a date for prediction (2024-2024):")
-your_timestamp = pd.Timestamp('2024-07-16')  # or any pd.Timestamp object
+prediction_date = st.date_input("Enter a date for prediction (2024-2029):")
 
-if your_timestamp.date() == your_date:
-  
+# Ensure date is within the specified range
+start_date = datetime(2024, 1, 1).date()
+end_date = datetime(2029, 12, 31).date()
 
+if prediction_date < start_date or prediction_date > end_date:
+    st.error("Please select a date between 2024 and 2029.")
+else:
+    prediction_date_ordinal = np.array([[prediction_date.toordinal()]])
     # Button to predict closing price
     if st.button('Predict Close Price'):
         predicted_close_price = close_price_model.predict(prediction_date_ordinal)
