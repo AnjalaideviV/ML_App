@@ -82,7 +82,7 @@ except FileNotFoundError as e:
     st.error(f"Model file not found: {e}")
     st.stop()
 
-st.title("Reliance Industries Stock Data Prediction")
+st.title("Stock Price Prediction")
 
 # Date input
 prediction_date = st.date_input("Enter a date for prediction (2024-2029):")
