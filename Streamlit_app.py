@@ -16,7 +16,7 @@ from sklearn.metrics import roc_curve,auc
 import warnings
 warnings.filterwarnings('ignore')
 
-st.title("Reliance Industries Stock Data Application")
+st.title("Stock Price Prediction Of RIL")
 
 data = pd.read_csv('Reliance data.csv')
 data['Date'] = pd.to_datetime(data['Date'])  
